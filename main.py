@@ -59,7 +59,7 @@ def get_artist_genres(artist_id, sp):
 # Function to get similar songs
 def get_similar_songs(track_id, sp):
     try:
-        recommendations = sp.recommendations(seed_tracks=[track_id], limit=10)
+        recommendations = sp.recommendations(seed_tracks=[track_id], limit=8)  # Change limit to 8
         return recommendations['tracks']
     except Exception as e:
         st.error(f"Error fetching similar songs: {e}")
@@ -91,31 +91,33 @@ if input_type == "Song":
                 st.write(f"**Track Name**: {track_name}")
                 st.write(f"**Artists**: {track_artists}")
                 st.write(f"**Genres**: {track_genres}")
+                st.write(f"**Release Year**: {track_info['album']['release_date'][:4]}")
                 st.write("---")
 
                 # Get similar songs
                 similar_songs = get_similar_songs(track_id, sp)
                 if similar_songs:
                     st.subheader("**Recommended Songs**:")
-                    cols = st.columns(5)  # Change to 5 columns
+                    cols = st.columns(4)  # Change to 4 columns
                     for i, song in enumerate(similar_songs):
-                        with cols[i % 5]:  # Arrange 2 songs per row
+                        with cols[i % 4]:  # Arrange songs per row
                             st.image(song['album']['images'][0]['url'], width=150)
                             st.write(f"**Track Name**: {song['name']}")
                             st.write(f"**Artists**: {', '.join([artist['name'] for artist in song['artists']])}")
                             song_genres = ', '.join(get_artist_genres(song['artists'][0]['id'], sp))  # Get genres for the song
                             st.write(f"**Genres**: {song_genres}")
+                            st.write(f"**Release Year**: {song['album']['release_date'][:4]}")
                             st.write(f"[Listen here]({song['external_urls']['spotify']})")
                 st.write("---")
 
                 # Get similar artists
                 primary_artist_id = track_info['artists'][0]['id']
-                similar_artists = sp.artist_related_artists(primary_artist_id)['artists'][:8]  # Limit to 10 artists
+                similar_artists = sp.artist_related_artists(primary_artist_id)['artists'][:8]  # Limit to 8 artists
                 if similar_artists:
                     st.subheader("**Artists you may like**:")
-                    cols_artists = st.columns(5)  # Change to 5 columns
+                    cols_artists = st.columns(4)  # Change to 4 columns
                     for i, artist in enumerate(similar_artists):
-                        with cols_artists[i % 5]:  # Arrange 2 artists per row
+                        with cols_artists[i % 4]:  # Arrange artists per row
                             st.image(artist['images'][0]['url'], width=150)
                             st.write(f"**Artist Name**: {artist['name']}")
                             st.write(f"**Genres**: {', '.join(get_artist_genres(artist['id'], sp))}")  # Limit to 3 genres
@@ -144,12 +146,14 @@ elif input_type == "Playlist":
                     "Track Name": [track['name'] for track in playlist_tracks],
                     "Artists": [', '.join([artist['name'] for artist in track['artists']]) for track in playlist_tracks],
                     "Genres": [', '.join(get_artist_genres(track['artists'][0]['id'], sp)) for track in playlist_tracks],
+                    "Release Year": [track['album']['release_date'][:4] for track in playlist_tracks]  # Extract release year
                 }
                 track_df = pd.DataFrame(track_data)
 
                 # Show the playlist tracks in a table
                 st.subheader("**Playlist Tracks**:")
                 st.dataframe(track_df)
+                st.write("---")
 
                 selected_track = st.selectbox("Select a track from the playlist", options=track_df.index, format_func=lambda x: track_df['Track Name'][x])
 
@@ -166,33 +170,35 @@ elif input_type == "Playlist":
                     st.write(f"**Track Name**: {selected_track_name}")
                     st.write(f"**Artists**: {selected_track_artists}")
                     st.write(f"**Genres**: {selected_track_genres}")
+                    st.write(f"**Release Year**: {selected_track_info['album']['release_date'][:4]}")
                     st.write("---")
 
                     # Get similar songs for the selected track
                     similar_songs = get_similar_songs(selected_track_id, sp)
                     if similar_songs:
                         st.subheader("**Recommended Songs**:")
-                        cols = st.columns(4)  # Change to 5 columns
+                        cols = st.columns(4)  # Change to 4 columns
                         for i, song in enumerate(similar_songs):
-                            with cols[i % 4]:  # Arrange 2 songs per row
+                            with cols[i % 4]:  # Arrange songs per row
                                 st.image(song['album']['images'][0]['url'], width=150)
                                 st.write(f"**Track Name**: {song['name']}")
                                 st.write(f"**Artists**: {', '.join([artist['name'] for artist in song['artists']])}")
                                 song_genres = ', '.join(get_artist_genres(song['artists'][0]['id'], sp))  # Get genres for the song
                                 st.write(f"**Genres**: {song_genres}")
+                                st.write(f"**Release Year**: {song['album']['release_date'][:4]}")
                                 st.write(f"[Listen here]({song['external_urls']['spotify']})")
-                        st.write("---")
-                
-                    # Get similar artists based on the selected track's primary artist
+                    st.write("---")
+
+                    # Get similar artists for the selected track
                     primary_artist_id = selected_track_info['artists'][0]['id']
-                    similar_artists = sp.artist_related_artists(primary_artist_id)['artists'][:8]  # Limit to 10 artists
+                    similar_artists = sp.artist_related_artists(primary_artist_id)['artists'][:8]  # Limit to 8 artists
                     if similar_artists:
-                        st.subheader("**Suggested Artists**:")
-                        cols_artists = st.columns(4)  # Change to 5 columns
+                        st.subheader("**Artists you may like**:")
+                        cols_artists = st.columns(4)  # Change to 4 columns
                         for i, artist in enumerate(similar_artists):
-                            with cols_artists[i % 4]:  # Arrange 2 artists per row
+                            with cols_artists[i % 4]:  # Arrange artists per row
                                 st.image(artist['images'][0]['url'], width=150)
                                 st.write(f"**Artist Name**: {artist['name']}")
                                 st.write(f"**Genres**: {', '.join(get_artist_genres(artist['id'], sp))}")  # Limit to 3 genres
                                 st.write(f"[Listen here]({artist['external_urls']['spotify']})")
-            st.write("---")
+                    st.write("---")
