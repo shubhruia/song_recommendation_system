@@ -7,8 +7,8 @@ from spotipy.oauth2 import SpotifyOAuth
 import plotly.express as px
 
 # Spotify Credentials
-CLIENT_ID = '507961e243454e4891acc3abc230ed46'
-CLIENT_SECRET = '6768445bc4994868922bdbfc1de3cd83'
+CLIENT_ID = 'YOUR_ID'
+CLIENT_SECRET = 'YOUR_KEY'
 
 # Function to get Spotify access token
 def get_access_token():
