@@ -4,6 +4,7 @@ import base64
 import pandas as pd
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+import plotly.express as px
 
 # Spotify Credentials
 CLIENT_ID = '507961e243454e4891acc3abc230ed46'
@@ -153,6 +154,16 @@ elif input_type == "Playlist":
                 # Show the playlist tracks in a table
                 st.subheader("**Playlist Tracks**:")
                 st.dataframe(track_df)
+                st.write("---")
+
+                # Count the occurrences of each genre
+                genre_list = [genre for sublist in track_df['Genres'].str.split(', ') for genre in sublist if genre]
+                genre_counts = pd.Series(genre_list).value_counts()
+
+                # Display the genre distribution pie chart
+                st.subheader("**Genre Distribution in Playlist**:")
+                fig = px.pie(genre_counts, values=genre_counts.values, names=genre_counts.index, title="Genre Distribution")
+                st.plotly_chart(fig)
                 st.write("---")
 
                 selected_track = st.selectbox("Select a track from the playlist", options=track_df.index, format_func=lambda x: track_df['Track Name'][x])
