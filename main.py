@@ -1,14 +1,19 @@
-import streamlit as st
-import requests
+import os
+from dotenv import load_dotenv
 import base64
+import requests
 import pandas as pd
+import streamlit as st
+import plotly.express as px
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-import plotly.express as px
 
-# Spotify Credentials
-CLIENT_ID = '50e5ee5e805d4a37aa3a54f3586f357e'
-CLIENT_SECRET = '22cc0c93d54b45f48cb23528bfe78318'
+# Load environment variables from .env file
+load_dotenv()
+
+# Spotify Credentials (loaded from environment variables)
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 # Function to get Spotify access token
 def get_access_token():
@@ -19,6 +24,7 @@ def get_access_token():
     }
     response = requests.post(token_url, data={'grant_type': 'client_credentials'}, headers=headers)
 
+    # Check if the response was successful
     if response.status_code == 200:
         return response.json()['access_token']
     else:
@@ -122,6 +128,7 @@ if input_type == "Song":
                             st.image(artist['images'][0]['url'], width=150)
                             st.write(f"**Artist Name**: {artist['name']}")
                             st.write(f"**Genres**: {', '.join(get_artist_genres(artist['id'], sp))}")  # Limit to 3 genres
+                            st.write(f"**Popularity**: {artist['popularity']}")
                             st.write(f"[Listen here]({artist['external_urls']['spotify']})")
                 st.write("---")
 
@@ -161,7 +168,7 @@ elif input_type == "Playlist":
                 genre_counts = pd.Series(genre_list).value_counts()
 
                 # Display the genre distribution pie chart
-                st.subheader("**Genre Distribution in Playlist**:")
+                st.subheader("**Looks like you like these genres**:")
                 fig = px.pie(genre_counts, values=genre_counts.values, names=genre_counts.index, title="Genre Distribution")
                 st.plotly_chart(fig)
                 st.write("---")
@@ -211,5 +218,6 @@ elif input_type == "Playlist":
                                 st.image(artist['images'][0]['url'], width=150)
                                 st.write(f"**Artist Name**: {artist['name']}")
                                 st.write(f"**Genres**: {', '.join(get_artist_genres(artist['id'], sp))}")  # Limit to 3 genres
+                                st.write(f"**Popularity**: {artist['popularity']}")
                                 st.write(f"[Listen here]({artist['external_urls']['spotify']})")
                     st.write("---")
