@@ -8,8 +8,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 # Spotify Credentials
-CLIENT_ID = 'CLIENT_ID'
-CLIENT_SECRET = 'CLIENT_SECRET'
+CLIENT_ID = 'YOUR_CLIENT_ID'
+CLIENT_SECRET = 'YOUR_CLIENT_SECRET'
 
 # Function to get Spotify access token
 def get_access_token():
