@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 import base64
 import requests
 import pandas as pd
@@ -8,12 +7,9 @@ import plotly.express as px
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Spotify Credentials (loaded from environment variables)
-CLIENT_ID = os.getenv('CLIENT_ID')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+# Spotify Credentials
+CLIENT_ID = 'CLIENT_ID'
+CLIENT_SECRET = 'CLIENT_SECRET'
 
 # Function to get Spotify access token
 def get_access_token():
@@ -24,7 +20,6 @@ def get_access_token():
     }
     response = requests.post(token_url, data={'grant_type': 'client_credentials'}, headers=headers)
 
-    # Check if the response was successful
     if response.status_code == 200:
         return response.json()['access_token']
     else:
