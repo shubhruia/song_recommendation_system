@@ -1,19 +1,14 @@
 import base64
 import requests
-import os
-from dotenv import load_dotenv
 import pandas as pd
 import streamlit as st
 import plotly.express as px
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-# Load environment variables from .env file
-load_dotenv()
-
 # Spotify Credentials
-CLIENT_ID = os.getenv('CLIENT_ID')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+CLIENT_ID = st.secrets["CLIENT_ID"]
+CLIENT_SECRET = st.secrets["CLIENT_SECRET"]
 
 # Function to get Spotify access token
 def get_access_token():
