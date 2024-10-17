@@ -1,5 +1,6 @@
 import base64
 import requests
+import os
 import pandas as pd
 import streamlit as st
 import plotly.express as px
@@ -7,8 +8,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 # Spotify Credentials
-CLIENT_ID = 'b06d7161409f42c9a9ab4519124d98ae'
-CLIENT_SECRET = 'dc58187ca3c94c8baf4f6eea4ad70e80'
+CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
+CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
 
 # Function to get Spotify access token
 def get_access_token():
